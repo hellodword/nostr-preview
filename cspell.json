@@ -20,6 +20,7 @@
     "materialdesignicons",
     "Composables",
     "vite",
-    "linkify"
+    "linkify",
+    "damus"
   ]
 }

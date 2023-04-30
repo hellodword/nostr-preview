@@ -12,4 +12,5 @@ if [ -f ~/.git-completion.bash ]; then
 fi
 EOF
 
+echo 'alias npm="echo use yarn"' >> ~/.bashrc
 yarn install

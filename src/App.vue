@@ -1,7 +1,5 @@
 <template>
-  <!-- <router-view /> -->
   <div>
-    <textarea rows="10" cols="80" id="input" v-model="inputValue"></textarea>
     <div id="tags" v-html="tagsValue"></div>
     <div v-html="outputValue"></div>
   </div>
@@ -11,9 +9,15 @@
 <script>
 import { defineComponent } from 'vue'
 
+import {
+  nip19,
+  SimplePool,
+} from 'nostr-tools'
+
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import MarkdownIt from 'markdown-it';
+
 const md = new MarkdownIt({
   html: true,
   linkify: true,
@@ -23,8 +27,8 @@ const md = new MarkdownIt({
     if (lang && hljs.getLanguage(lang)) {
       try {
         return '<pre class="hljs"><code>' +
-               hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-               '</code></pre>';
+          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+          '</code></pre>';
       } catch (__) { /* empty */ }
     }
 
@@ -32,14 +36,19 @@ const md = new MarkdownIt({
   }
 });
 
+
+
 export default defineComponent({
   data() {
     return {
       inputValue: '',
       outputValue: '',
       tagsValue: '',
+      pool: new SimplePool(),
+      relays: ['wss://nos.lol/', 'wss://relay.damus.io/'],
     };
   },
+
   methods: {
     render(value) {
       const tagRegex = /^#[\w\d]+(?= *$)/mg;
@@ -54,15 +63,44 @@ export default defineComponent({
       const replacedMarkdown = value.replace(/\n^#[\w\d]+ *$/mg, '').replace(/^#[\w\d]+ *$\n/mg, '').replace(/^#[\w\d]+ *$/mg, '');
       this.outputValue = md.render(replacedMarkdown);
     },
+
+    onEvent(event) {
+      console.log('we got the event we wanted:', event)
+      this.inputValue = event.content;
+    },
   },
+
   watch: {
     inputValue(value) {
       this.render(value)
     },
   },
+
   mounted() {
     this.render(this.inputValue)
   },
+
+  created() {
+    const m = document.location.search.match(/(?<=note=)note[\da-z]+/);
+    if (!m || m.length == 0) {
+      alert('链接不正确');
+    }
+
+    const n = nip19.decode(m[0]);
+    if (!n || !n.data) {
+      alert('nip19');
+    }
+
+    let sub = this.pool.sub(
+      this.relays,
+      [
+        {
+          ids: [n.data]
+        }
+      ]);
+    sub.on('event', this.onEvent);
+  },
+
 });
 </script>
 
