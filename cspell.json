@@ -21,6 +21,7 @@
     "Composables",
     "vite",
     "linkify",
-    "damus"
+    "damus",
+    "mathjax"
   ]
 }
