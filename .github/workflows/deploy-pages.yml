@@ -39,7 +39,7 @@ jobs:
           cache: yarn
       - run: yarn install --frozen-lockfile
       - name: Build
-        run: npx vite build --base=/nostr-preview/
+        run: yarn run build --base=/nostr-preview/
       - uses: actions/configure-pages@v2
       - uses: actions/upload-pages-artifact@v1
         with:

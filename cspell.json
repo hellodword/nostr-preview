@@ -19,6 +19,7 @@
     "webfontloader",
     "materialdesignicons",
     "Composables",
-    "vite"
+    "vite",
+    "linkify"
   ]
 }
