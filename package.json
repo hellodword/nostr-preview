@@ -21,6 +21,7 @@
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {
+    "@types/markdown-it": "^12.2.3",
     "@vitejs/plugin-vue": "^3.0.3",
     "eslint": "^8.37.0",
     "eslint-plugin-vue": "^9.3.0",
